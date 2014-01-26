@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=uDART
+Comment=Real-time station information for Dublin Area Rapid Transit (DART).
+Exec=qmlscene $@ uDART.qml
+Icon=udart_icon.png
+Terminal=false
+Type=Application
+X-Ubuntu-Touch=true

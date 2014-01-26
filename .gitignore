@@ -1,0 +1,4 @@
+.excludes
+manifest.json
+uDART.qmlproject.user
+/tests
