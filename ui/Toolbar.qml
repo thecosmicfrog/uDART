@@ -22,7 +22,8 @@ ToolbarItems {
             Label {
                 text: "<p>Real-time station information for Dublin Area Rapid Transit (DART).</p><br>
                        <p><a href=\"http://udart.thecosmicfrog.org\">
-                       http://udart.thecosmicfrog.org</a></p>"
+                       http://udart.thecosmicfrog.org</a></p><br>
+                       <p>Version: 0.11</p>"
                 wrapMode: Text.WordWrap
 
                 onLinkActivated: {
