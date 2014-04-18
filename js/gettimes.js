@@ -11,7 +11,7 @@ WorkerScript.onMessage = function(sentMessage) {
 
     // Query a hosted Luas API script. Returns JSON object with service message and times for the given stop.
     // API can be found here: https://github.com/ncremins/luas-api
-    xmlHttp.open("GET", "http://ks3290596.kimsufi.com/irish-rail-api-v1/irish-rail-api.php?station=" + station, true);
+    xmlHttp.open("GET", "http://udart-times.thecosmicfrog.org/irish-rail-api-v1/irish-rail-api.php?station=" + station, true);
     xmlHttp.send(null);
 
     xmlHttp.onreadystatechange = function() {
