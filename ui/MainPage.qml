@@ -1,5 +1,6 @@
 import QtQuick 2.0
-import Ubuntu.Components 0.1
+import Ubuntu.Components 1.1
+import Ubuntu.Components.Popups 1.0
 
 Page {
     title: i18n.tr("uDART")
@@ -54,23 +55,75 @@ Page {
         }
     }
 
+    head.actions: [
+        Action {
+            id: reloadAction
+
+            iconName: "reload"
+            text: "Reload"
+
+            onTriggered: {
+                activityIndicator.running = true
+                queryStationTimesWorker.sendMessage({'station': stationsModel.get(stationSelector.selectedIndex).name})
+            }
+        },
+        Action {
+            id: aboutAction
+
+            iconName: "info"
+            text: "About"
+
+            onTriggered: PopupUtils.open(aboutPopover)
+        }
+    ]
+
+    AboutPopover {
+        id: aboutPopover
+    }
+
     Item {
+        id: selectStationRow
+
         anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+
+            topMargin: units.gu(2)
             margins: units.gu(2)
-            fill: parent
+        }
+
+        Label {
+            id: selectStationLabel
+
+            text: "<b>Select Stop:</b>"
         }
 
         ActivityIndicator {
             id: activityIndicator
 
-            // Align activity indicator to the right.
-            anchors.left: parent.left
-            LayoutMirroring.enabled: true
+            anchors.right: parent.right
+
+            y: selectStationLabel.y - 6
+        }
+    }
+
+    Row {
+        id: stationRow
+
+        spacing: -20
+
+        anchors {
+            top: selectStationRow.bottom
+            left: parent.left
+            right: parent.right
+
+            topMargin: units.gu(4)
+            margins: units.gu(2)
         }
 
         OptionSelector {
             id: stationSelector
-            text: "<h2>Select Stop:</h2>"
             containerHeight: units.gu(21.5)
             expanded: false
             model: stationsModel
@@ -78,7 +131,7 @@ Page {
             delegate: OptionSelectorDelegate {
                 text: name
                 subText: description
-                icon: image
+                iconSource: image
             }
 
             onSelectedIndexChanged: {
@@ -89,41 +142,18 @@ Page {
                 lastStation.contents = {stationName: stationsModel.get(stationSelector.selectedIndex).name}
             }
         }
+    }
 
-        ListModel {
-            id: stationsModel
-            ListElement { name: "Malahide"; description: ""; image: "../img/parking_and_bicycle.png" }
-            ListElement { name: "Portmarnock"; description: ""; image: "../img/parking_and_bicycle.png" }
-            ListElement { name: "Clongriffin"; description: ""; image: "../img/parking_and_bicycle.png" }
-            ListElement { name: "Howth"; description: ""; image: "../img/parking_and_bicycle.png" }
-            ListElement { name: "Sutton"; description: ""; image: "../img/parking_and_bicycle.png" }
-            ListElement { name: "Bayside"; description: ""; image: "../img/parking_and_bicycle.png" }
-            ListElement { name: "Howth Junction"; description: ""; image: "../img/bicycle.png" }
-            ListElement { name: "Kilbarrack"; description: ""; image: "../img/blank.png" }
-            ListElement { name: "Raheny"; description: ""; image: "../img/blank.png" }
-            ListElement { name: "Harmonstown"; description: ""; image: "../img/blank.png" }
-            ListElement { name: "Killester"; description: ""; image: "../img/parking_and_bicycle.png" }
-            ListElement { name: "Clontarf Road"; description: ""; image: "../img/parking_and_bicycle.png" }
-            ListElement { name: "Dublin Connolly"; description: ""; image: "../img/parking_and_bicycle.png" }
-            ListElement { name: "Tara Street"; description: ""; image: "../img/blank.png" }
-            ListElement { name: "Dublin Pearse"; description: ""; image: "../img/bicycle.png" }
-            ListElement { name: "Grand Canal Dock"; description: ""; image: "../img/bicycle.png" }
-            ListElement { name: "Lansdowne Road"; description: ""; image: "../img/blank.png" }
-            ListElement { name: "Sandymount"; description: ""; image: "../img/blank.png" }
-            ListElement { name: "Sydney Parade"; description: ""; image: "../img/blank.png" }
-            ListElement { name: "Booterstown"; description: ""; image: "../img/parking_and_bicycle.png" }
-            ListElement { name: "Blackrock"; description: ""; image: "../img/blank.png" }
-            ListElement { name: "Seapoint"; description: ""; image: "../img/blank.png" }
-            ListElement { name: "Salthill"; description: ""; image: "../img/parking_and_bicycle.png" }
-            ListElement { name: "Dun Laoghaire"; description: ""; image: "../img/bicycle.png" }
-            ListElement { name: "Sandycove"; description: ""; image: "../img/blank.png" }
-            ListElement { name: "Glenageary"; description: ""; image: "../img/bicycle.png" }
-            ListElement { name: "Dalkey"; description: ""; image: "../img/parking_and_bicycle.png" }
-            ListElement { name: "Killiney"; description: ""; image: "../img/parking_and_bicycle.png" }
-            ListElement { name: "Shankill"; description: ""; image: "../img/parking.png" }
-            ListElement { name: "Bray"; description: ""; image: "../img/parking_and_bicycle.png" }
-            ListElement { name: "Greystones"; description: ""; image: "../img/parking_and_bicycle.png" }
-            ListElement { name: "Kilcoole"; description: ""; image: "../img/parking_and_bicycle.png" }
+    Column {
+        id: statusColumn
+
+        anchors {
+            top: stationRow.bottom
+            left: parent.left
+            right: parent.right
+
+            topMargin: units.gu(4)
+            margins: units.gu(2)
         }
 
         UbuntuShape {
@@ -132,11 +162,6 @@ Page {
             height: units.gu(3)
             radius: "medium"
             color: "#7dc242"
-
-            anchors {
-                top: stationSelector.bottom
-                topMargin: units.gu(2)
-            }
 
             Label {
                 text: "<b>Northbound</b>"
@@ -152,11 +177,6 @@ Page {
             height: units.gu(3)
             radius: "medium"
             color: "white"
-
-            anchors {
-                top: northbound.bottom
-                topMargin: units.gu(0)
-            }
 
             Label {
                 id: northboundTitleDestination
@@ -206,11 +226,6 @@ Page {
             radius: "medium"
             color: "white"
 
-            anchors {
-                top: northboundTitle.bottom
-                topMargin: units.gu(0)
-            }
-
             Label {
                 id: northboundStop1Name
                 width: parent.width / 2.3
@@ -250,11 +265,6 @@ Page {
             height: units.gu(3)
             radius: "medium"
             color: "white"
-
-            anchors {
-                top: northboundStop1.bottom
-                topMargin: units.gu(0)
-            }
 
             Label {
                 id: northboundStop2Name
@@ -296,11 +306,6 @@ Page {
             radius: "medium"
             color: "white"
 
-            anchors {
-                top: northboundStop2.bottom
-                topMargin: units.gu(0)
-            }
-
             Label {
                 id: northboundStop3Name
                 width: parent.width / 2.3
@@ -340,11 +345,6 @@ Page {
             height: units.gu(3)
             radius: "medium"
             color: "white"
-
-            anchors {
-                top: northboundStop3.bottom
-                topMargin: units.gu(0)
-            }
 
             Label {
                 id: northboundStop4Name
@@ -386,11 +386,6 @@ Page {
             radius: "medium"
             color: "#7dc242"
 
-            anchors {
-                top: northboundStop4.bottom
-                topMargin: units.gu(0)
-            }
-
             Label {
                 text: "<b>Southbound</b>"
                 color: "white"
@@ -405,11 +400,6 @@ Page {
             height: units.gu(3)
             radius: "medium"
             color: "white"
-
-            anchors {
-                top: southbound.bottom
-                topMargin: units.gu(0)
-            }
 
             Label {
                 id: southboundTitleDestination
@@ -459,11 +449,6 @@ Page {
             radius: "medium"
             color: "white"
 
-            anchors {
-                top: southboundTitle.bottom
-                topMargin: units.gu(0)
-            }
-
             Label {
                 id: southboundStop1Name
                 width: parent.width / 2.3
@@ -503,11 +488,6 @@ Page {
             height: units.gu(3)
             radius: "medium"
             color: "white"
-
-            anchors {
-                top: southboundStop1.bottom
-                topMargin: units.gu(0)
-            }
 
             Label {
                 id: southboundStop2Name
@@ -549,11 +529,6 @@ Page {
             radius: "medium"
             color: "white"
 
-            anchors {
-                top: southboundStop2.bottom
-                topMargin: units.gu(0)
-            }
-
             Label {
                 id: southboundStop3Name
                 width: parent.width / 2.3
@@ -594,11 +569,6 @@ Page {
             radius: "medium"
             color: "white"
 
-            anchors {
-                top: southboundStop3.bottom
-                topMargin: units.gu(0)
-            }
-
             Label {
                 id: southboundStop4Name
                 width: parent.width / 2.3
@@ -633,16 +603,39 @@ Page {
         }
     }
 
-    tools: Toolbar {
-        ToolbarButton {
-            id: reloadButton
-
-            text: "Reload"
-            iconSource: "../img/reload.png"
-            onTriggered: {
-                activityIndicator.running = true
-                queryStationTimesWorker.sendMessage({'station': stationsModel.get(stationSelector.selectedIndex).name})
-            }
-        }
+    ListModel {
+        id: stationsModel
+        ListElement { name: "Malahide"; description: ""; image: "../img/parking_and_bicycle.png" }
+        ListElement { name: "Portmarnock"; description: ""; image: "../img/parking_and_bicycle.png" }
+        ListElement { name: "Clongriffin"; description: ""; image: "../img/parking_and_bicycle.png" }
+        ListElement { name: "Howth"; description: ""; image: "../img/parking_and_bicycle.png" }
+        ListElement { name: "Sutton"; description: ""; image: "../img/parking_and_bicycle.png" }
+        ListElement { name: "Bayside"; description: ""; image: "../img/parking_and_bicycle.png" }
+        ListElement { name: "Howth Junction"; description: ""; image: "../img/bicycle.png" }
+        ListElement { name: "Kilbarrack"; description: ""; image: "../img/blank.png" }
+        ListElement { name: "Raheny"; description: ""; image: "../img/blank.png" }
+        ListElement { name: "Harmonstown"; description: ""; image: "../img/blank.png" }
+        ListElement { name: "Killester"; description: ""; image: "../img/parking_and_bicycle.png" }
+        ListElement { name: "Clontarf Road"; description: ""; image: "../img/parking_and_bicycle.png" }
+        ListElement { name: "Dublin Connolly"; description: ""; image: "../img/parking_and_bicycle.png" }
+        ListElement { name: "Tara Street"; description: ""; image: "../img/blank.png" }
+        ListElement { name: "Dublin Pearse"; description: ""; image: "../img/bicycle.png" }
+        ListElement { name: "Grand Canal Dock"; description: ""; image: "../img/bicycle.png" }
+        ListElement { name: "Lansdowne Road"; description: ""; image: "../img/blank.png" }
+        ListElement { name: "Sandymount"; description: ""; image: "../img/blank.png" }
+        ListElement { name: "Sydney Parade"; description: ""; image: "../img/blank.png" }
+        ListElement { name: "Booterstown"; description: ""; image: "../img/parking_and_bicycle.png" }
+        ListElement { name: "Blackrock"; description: ""; image: "../img/blank.png" }
+        ListElement { name: "Seapoint"; description: ""; image: "../img/blank.png" }
+        ListElement { name: "Salthill"; description: ""; image: "../img/parking_and_bicycle.png" }
+        ListElement { name: "Dun Laoghaire"; description: ""; image: "../img/bicycle.png" }
+        ListElement { name: "Sandycove"; description: ""; image: "../img/blank.png" }
+        ListElement { name: "Glenageary"; description: ""; image: "../img/bicycle.png" }
+        ListElement { name: "Dalkey"; description: ""; image: "../img/parking_and_bicycle.png" }
+        ListElement { name: "Killiney"; description: ""; image: "../img/parking_and_bicycle.png" }
+        ListElement { name: "Shankill"; description: ""; image: "../img/parking.png" }
+        ListElement { name: "Bray"; description: ""; image: "../img/parking_and_bicycle.png" }
+        ListElement { name: "Greystones"; description: ""; image: "../img/parking_and_bicycle.png" }
+        ListElement { name: "Kilcoole"; description: ""; image: "../img/parking_and_bicycle.png" }
     }
 }
