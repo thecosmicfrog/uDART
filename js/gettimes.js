@@ -97,7 +97,7 @@ WorkerScript.onMessage = function(sentMessage) {
                     stationInfo[0] = ["<b>No trains forecast</b>", "", "", ""];
 
                     // Populate array with empty strings.
-                    for (var i = 1; i < 6; i++) {
+                    for (var i = 1; i < 8; i++) {
                         stationInfo[i] = ["", "", "", ""];
                     }
                 }
