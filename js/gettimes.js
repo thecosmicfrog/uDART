@@ -94,7 +94,7 @@ WorkerScript.onMessage = function(sentMessage) {
                 }
                 // If train times are not present in returned API message, service has probably stopped running for the day.
                 else {
-                    stationInfo[0] = ["<b>No trains forecast</b>", ""];
+                    stationInfo[0] = ["<b>No trains forecast</b>", "", "", ""];
 
                     // Populate array with empty strings.
                     for (var i = 1; i < 6; i++) {
